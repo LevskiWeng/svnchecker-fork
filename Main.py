@@ -67,18 +67,26 @@ for profile in config.getProfiles():
 for filename in toRemove:
     files.remove(filename)
 
-default = "^("
+
+prefix = "^("
+postfix = ")$"
+default = ""
+file_array = []
 for filename in files:
     default += filename + "|"
-default = default.strip("|")
-default += ")$"
-
+    #If the string is too long, the regular expression comparation will get failed.
+	#Split the long string into substrings whose length are approximately 2KB to avoid the problem.
+    if ((len(default)>= 2048) or (files.index(filename) == len(files))):
+        default = default.strip("|")
+        file_array += [prefix + default + postfix]
+        default = ""
 
 for profile in config.getProfiles() + [Config.DEFAULTSECT]:
 
     config.setProfile(profile)
     if profile == Config.DEFAULTSECT:
-        transaction.setProfile(default)
+        for some_files in file_array:
+            transaction.setProfile(some_files)
     else:
         transaction.setProfile(config.getString('Main.Regex', "^$"))
 
