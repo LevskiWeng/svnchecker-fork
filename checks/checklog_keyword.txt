@@ -1,0 +1,6 @@
+Change the keyword file's content, every keyword per line and currently it doesn't support empty line.
+The file should be ANSI encoding. :(
+The Keyword is somewhat like:
+Keyword 1
+keyword2
+No empty line
