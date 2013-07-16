@@ -30,12 +30,13 @@ def run(transaction, config):
 
     files = [transaction.getFile(oneFile[0]) for oneFile in files.iteritems() if oneFile[1] in ["A", "U", "UU"]]
 
-    try:
-        Process.execute(command + " ".join(files))
-    except Process.ProcessException, e:
-        msg = "Coding style errors found:\n\n"
-        msg += e.output + "\n"
-        msg += "See Checkstyle documentation for a detailed description: http://checkstyle.sourceforge.net/"
-        return (msg, 1)
+	if files:
+		try:
+			Process.execute(command + " ".join(files))
+		except Process.ProcessException, e:
+			msg = "Coding style errors found:\n\n"
+			msg += e.output + "\n"
+			msg += "See Checkstyle documentation for a detailed description: http://checkstyle.sourceforge.net/"
+			return (msg, 1)
 
     return ("", 0)
