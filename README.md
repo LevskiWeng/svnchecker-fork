@@ -1,5 +1,5 @@
-svnchecker-fork
-===============
+# svnchecker-fork #
+----
 
 svnchecker-fork is a fork repository of [svnchecker](http://svnchecker.tigris.org/). 
 
@@ -15,7 +15,7 @@ For example, the first version of this project will be 0.3.1 because the current
 
 ## How to use
 
-You could use this project according to the [manual of svnchecker](http://svnchecker.tigris.org/servlets/ProjectDocumentList;jsessionid=AE41B5BC7EB23951DAD5B9B4A8B37625). And this project will provide extra documentation when necessary.
+You could use this project according to the [manual of svnchecker](http://svnchecker.tigris.org/servlets/ProjectDocumentList;jsessionid=AE41B5BC7EB23951DAD5B9B4A8B37625). And addtitional documentation is available in file [AdditionalManual.md](https://github.com/LevskiWeng/svnchecker-fork/blob/master/AdditionManual.md)
 
 ## Authors
 
@@ -26,7 +26,7 @@ You could use this project according to the [manual of svnchecker](http://svnche
 
 ## Contributing
 
-Please submit all pull requests against 'dev' branch. 'master' branch is only for upstreaming for svnchecker.
+Please submit all pull requests against 'dev' branch. 'master' branch is only for upstreaming for svnchecker. You could send me pull-requests when you have patches or implement new features. 
 
 Thanks!
 
