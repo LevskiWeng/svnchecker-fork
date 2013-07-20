@@ -16,32 +16,55 @@
 
 #import codecs
 from modules import Process
+import re
+
+## {{{ http://code.activestate.com/recipes/410692/ (r8)
+# This class provides the functionality we want. You only need to look at
+# this if you want to know how this works. It only needs to be defined
+# once, no need to muck around with its internals.
+class switch(object):
+    def __init__(self, value):
+        self.value = value
+        self.fall = False
+ 
+    def __iter__(self):
+        """Return the match method once, then stop"""
+        yield self.match
+        raise StopIteration
+     
+    def match(self, *args):
+        """Indicate whether or not to enter a case suite"""
+        if self.fall or not args:
+            return True
+        elif self.value in args: # changed for v1.5, see below
+            self.fall = True
+            return True
+        else:
+            return False
 
 def run(transaction, config):
-    keyword_list = [""]
-    #The encoding of the file must be ansi
-    #The keyword file stores every keyword per line
-	#TODO: Currently the path is hard code, maybe someday I'll find a better solution.
-    keyword_file_path = "F:/root/style_check/svnchecker-0.3/checks/checklog_keyword.txt"
-    keyword_file = open(keyword_file_path).read()
-    
-    err_msg =  "The commit is for bug fix because I found one of the keywords in the log:\n"
-    err_msg += keyword_file + "\n"
-    err_msg += "But the log has an incorrect structure.\n"
-    err_msg += "The first line of bug fixing log should look like:\n"
-    err_msg += "ref #123, #456, fix #789\n"
-    err_msg += "It means that the commit is relevant to bug number 123 and bug number 456, and the commit fixes bug number #789\n\n"
-    err_msg += "Please modify your commit log and try again."
-    
-    commit_log =  transaction.getCommitMsg()
-    log_list = [""]
+	
+	checklog_mode = config.getString("checklog.mode")
+	err_msg = ""
+	
+	for case in switch(checklog_mode):
+		if case('Keyword'):
+			keywordFilePath = config.getString("checklog.KeywordFile")
+			#The encoding of the file must be ansi	
+			keywordFile = open(keywordFilePath).read()
+			keywordList = keywordFile.split('\n')
+			
+			commitLog =  transaction.getCommitMsg()
+			
+			for keyword in keywordList:
+				keywordPair = keyword.split('=')
+				if (commitLog.find(keywordPair[0]) != -1):
+					match = re.match(keywordPair[1].encode('string-escape'), commitLog)
+					if not match:
+						err_msg = "I found the keyword :" + keywordPair[0] + " in your commit log, but the log style doesn't obey the pre-defined regular expression :\r\n" + keywordPair[1]
+						return (err_msg, 1)
+			break
+		if case():
+			return ( "Currently the checklog engin doesn't support '" + checklog_mode + "'mode")
 
-    keyword_list = keyword_file.split('\n')
-    for keyword in keyword_list:
-        if (commit_log.find(keyword) != -1):
-            log_list = commit_log.split('\n')
-        
-            if (log_list[0].upper().find("REF #") == -1) and (log_list[0].upper().find("FIX #") == -1):
-                return (err_msg, 1)
-        
-    return ("",0)
+	return (err_msg,0)
