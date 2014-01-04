@@ -78,8 +78,12 @@ class Transaction:
         """
         Sets the current profile.
         Do NOT use in your checks or handlers.
+        
+        Bug fix:
+        If the profile contains specical characters that regular expression uses,
+        the re.compile() process will get failed.
         """
-        self.profile = re.compile(profile)
+        self.profile = re.compile(re.escape(profile))
 
     def getUserID(self):
         """ Returns a string with the username of the current transaction. """
